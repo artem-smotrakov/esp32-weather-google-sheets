@@ -20,8 +20,18 @@ FORM_TEMPLATE = """\
     <head>
         <title>Watering system configuration</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript">
+            function init() {
+                var s = document.getElementById('error_handling_options');
+                for (var i = 0; i < s.options.length; i++) {
+                    if (s.options[i].value == '%error_handling%') {
+                        s.options[i].selected = true;
+                    }
+                }
+            }
+        </script>
     </head>
-    <body>
+    <body onload="init();">
         <h2 style="font-size:10vw">Watering system configuration</h2>
         <form method="post">
             <h3 style="font-size:5vw">Wi-Fi settings</h3>
@@ -29,14 +39,18 @@ FORM_TEMPLATE = """\
                 <p style="width: 100%;">SSID:&nbsp;<input name="ssid" type="text" value="%ssid%"/></p>
                 <p style="width: 100%;">Password:&nbsp;<input name="password" type="password"/></p>
             </div>
-            <h3 style="font-size:5vw">Watering settings</h3>
-            <div style="width: 100%;">
-                <p style="width: 100%;">Interval:&nbsp;<input name="watering_interval" type="text" value="%watering_interval%"/></p>
-                <p style="width: 100%;">Duration:&nbsp;<input name="watering_duration" type="text" value="%watering_duration%"/></p>
-            </div>
             <h3 style="font-size:5vw">Measurement settings</h3>
             <div style="width: 100%;">
                 <p style="width: 100%;">Interval:&nbsp;<input name="measurement_interval" type="text" value="%measurement_interval%"/></p>
+            </div>
+            <h3 style="font-size:5vw">Error handling</h3>
+            <div style="width: 100%;">
+                <p style="width: 100%;">
+                    <select name="error_handling" id="error_handling_options">
+                        <option value="stop">Stop</option>
+                        <option value="reboot">Reboot</option>
+                    </select>
+                </p>
             </div>
             <div>
                 <p style="width: 100%;"><input type="submit" value="Update"></p>
@@ -55,6 +69,7 @@ def get_form(config):
     form = form.replace('%watering_interval%', str(config.get('watering_interval')))
     form = form.replace('%watering_duration%', str(config.get('watering_duration')))
     form = form.replace('%measurement_interval%', str(config.get('measurement_interval')))
+    form = form.replace('%error_handling%', str(config.get('error_handling')))
     return HTTP_RESPONSE % (len(form), form)
 
 # a handler for incoming HTTP connections
@@ -64,7 +79,7 @@ def get_form(config):
 class ConnectionHandler:
 
     def __init__(self, config):
-        self.config = config
+        self._config = config
 
     def handle(self, client_s, status_line, headers, data):
 
@@ -83,12 +98,12 @@ class ConnectionHandler:
                 if name == 'password' and not value:
                     continue
 
-                config.set(name, value)
+                self._config.set(name, value)
 
             # store the config
-            config.store()
+            self._config.store()
 
             # redirect the client to avoid resubmitting the form
             client_s.write(HTTP_REDIRECT)
         else:
-            client_s.write(get_form(config))
+            client_s.write(get_form(self._config))

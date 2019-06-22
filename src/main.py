@@ -1,8 +1,8 @@
 # ssid and password for the access point
 # make sure that the password is not too short
 # otherwise, an OSError occurs while setting up a wi-fi access point
-ACCESS_POINT_SSID = 'esp32-dht22-google-sheets'
-ACCESS_POINT_PASSWORD = 'helloesp8266'
+ACCESS_POINT_SSID = 'esp32-weather-google-sheets'
+ACCESS_POINT_PASSWORD = 'helloesp32'
 
 class WeatherHandler:
 
