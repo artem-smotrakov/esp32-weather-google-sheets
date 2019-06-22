@@ -18,7 +18,7 @@ Location: /
 FORM_TEMPLATE = """\
 <html>
     <head>
-        <title>Watering system configuration</title>
+        <title>Weather station configuration</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
             function init() {
@@ -32,7 +32,7 @@ FORM_TEMPLATE = """\
         </script>
     </head>
     <body onload="init();">
-        <h2 style="font-size:10vw">Watering system configuration</h2>
+        <h2 style="font-size:10vw">Weather station configuration</h2>
         <form method="post">
             <h3 style="font-size:5vw">Wi-Fi settings</h3>
             <div style="width: 100%;">
@@ -74,11 +74,16 @@ FORM_TEMPLATE = """\
 # (except the password for wi-fi network)
 def get_form(config):
     form = FORM_TEMPLATE
-    form = form.replace('%ssid%', str(config.get('ssid')))
-    form = form.replace('%measurement_interval%', str(config.get('measurement_interval')))
-    form = form.replace('%error_handling%', str(config.get('error_handling')))
-    form = form.replace('%google_service_account_email%', str(config.get('google_service_account_email')))
-    form = form.replace('%google_sheet_id%', str(config.get('google_sheet_id')))
+    form = form.replace('%ssid%',
+                        str(config.get('ssid')))
+    form = form.replace('%measurement_interval%',
+                        str(config.get('measurement_interval')))
+    form = form.replace('%error_handling%',
+                        str(config.get('error_handling')))
+    form = form.replace('%google_service_account_email%',
+                        str(config.get('google_service_account_email')))
+    form = form.replace('%google_sheet_id%',
+                        str(config.get('google_sheet_id')))
     return HTTP_RESPONSE % (len(form), form)
 
 # a handler for incoming HTTP connections
