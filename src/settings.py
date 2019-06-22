@@ -43,6 +43,15 @@ FORM_TEMPLATE = """\
             <div style="width: 100%;">
                 <p style="width: 100%;">Interval:&nbsp;<input name="measurement_interval" type="text" value="%measurement_interval%"/></p>
             </div>
+            <h3 style="font-size:5vw">Google Sheets settings</h3>
+            <div style="width: 100%;">
+                <p style="width: 100%;">Service account email:&nbsp;
+                    <input name="google_service_account_email" type="text" value="%google_service_account_email%" style="width: 100%;"/>
+                </p>
+                <p style="width: 100%;">Sheet ID:&nbsp;
+                    <input name="google_sheet_id" type="text" value="%google_sheet_id%" style="width: 100%;"/>
+                </p>
+            </div>
             <h3 style="font-size:5vw">Error handling</h3>
             <div style="width: 100%;">
                 <p style="width: 100%;">
@@ -66,10 +75,10 @@ FORM_TEMPLATE = """\
 def get_form(config):
     form = FORM_TEMPLATE
     form = form.replace('%ssid%', str(config.get('ssid')))
-    form = form.replace('%watering_interval%', str(config.get('watering_interval')))
-    form = form.replace('%watering_duration%', str(config.get('watering_duration')))
     form = form.replace('%measurement_interval%', str(config.get('measurement_interval')))
     form = form.replace('%error_handling%', str(config.get('error_handling')))
+    form = form.replace('%google_service_account_email%', str(config.get('google_service_account_email')))
+    form = form.replace('%google_sheet_id%', str(config.get('google_sheet_id')))
     return HTTP_RESPONSE % (len(form), form)
 
 # a handler for incoming HTTP connections
