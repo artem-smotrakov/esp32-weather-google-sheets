@@ -8,6 +8,8 @@ try:
 except:
     import requests
 
+import ntp
+
 class Spreadsheet:
 
     def __init__(self):
@@ -27,12 +29,13 @@ class Spreadsheet:
         self._sa = sa
 
     def append_values(self, values):
-        print('spreadsheet: send')
+        print('spreadsheet: send: %s' % values)
 
         token = self._sa.token()
 
         url = self._url_template % (self._id, self._range, self._url_params)
-        data = {'values': values}
+        values.insert(0, ntp.time())
+        data = {'values': [ values ]}
         headers = {}
         headers['Content-Type'] = 'application/json'
         headers['Authorization'] = 'Bearer %s' % token
@@ -40,3 +43,6 @@ class Spreadsheet:
 
         if not response:
             print('spreadsheet: no response received')
+
+        print('spreadsheet: response:')
+        print(response.text)
