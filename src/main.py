@@ -16,30 +16,30 @@ class WeatherHandler:
 
 # entry point
 
-# enable garbage collection
-import gc
-gc.enable()
-print('garbage collection threshold: ' + str(gc.threshold()))
-
 from weather import Weather
 from config import Config
 from machine import Pin
 from google.auth import ServiceAccount
 from google.sheet import Spreadsheet
-import util
+import gc
 import time
+import util
+
+# enable garbage collection
+gc.enable()
+print('garbage collection threshold: ' + str(gc.threshold()))
 
 # load a config from a file
 config = Config('main.conf', 'key.json')
 
 sa = ServiceAccount()
-sa.email('esp8266-watering-system@honey-i-am-home.iam.gserviceaccount.com')
+sa.email(config.get('google_service_account_email'))
 sa.scope('https://www.googleapis.com/auth/spreadsheets')
 sa.private_rsa_key(config.private_rsa_key())
 
 spreadsheet = Spreadsheet()
 spreadsheet.set_service_account(sa)
-spreadsheet.set_id('1ntcEW10wqH4FVtfQFL-dbWxvdoweJ-B2NywVgZ9Bb7E')
+spreadsheet.set_id(config.get('google_sheet_id'))
 spreadsheet.set_range('A:A')
 
 weather_handler = WeatherHandler(spreadsheet)
@@ -79,9 +79,10 @@ weather_handler.handle(1, 2)
 while True:
     try:
         weather.check()
-    except Exception as e:
-        print(e)
-    except OSError as e:
-        print(e)
+    except:
+        if config.get('error_handling') == 'reboot':
+            util.reboot()
+        else:
+            raise
 
     time.sleep(1) # in seconds
