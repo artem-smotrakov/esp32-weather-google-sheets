@@ -74,7 +74,7 @@ Then, you can connect to the board with `sh scripts/minicon.sh` command to check
 
 ### Configuration mode
 
-The switch turns on the configuration mode. In this mode the device sets up a Wi-Fi access point, and start an HTTP server on 92.168.4.1. The server provides a web page for updating the configuration of the device.
+The switch turns on the configuration mode. In this mode the device sets up a Wi-Fi access point, and start an HTTP server on http://192.168.4.1. The server provides a web page for updating the configuration of the device.
 
 ## Further enhancements
 
