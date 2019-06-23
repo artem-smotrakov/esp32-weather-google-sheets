@@ -4,10 +4,10 @@ This is a weather station based on ESP32 and MicroPython.
 
 Here is a list of main features:
 
-*  Measuring temperature and humidity with DHT22 sensor.
-*  Sending data to a Google sheet.
-*  Supporting Google OAuth 2.0 service to get access to the sheet. 
-*  Configuring the device via web browser.
+*  Measuring temperature and humidity with DHT22 sensor
+*  Sending data to a Google sheet
+*  Supporting Google OAuth 2.0 service to get access to the sheet
+*  Configuring the device via web browser
 
 The sheet doesn't need to be publicly available on the Internet. The device doesn't require any middleman such as PushingBox or IFTTT.
 
@@ -20,15 +20,15 @@ The project uses [MicroPython 1.11](https://github.com/micropython/micropython/t
 *  `esptool` for flashing ESP32
 *  `mpfshell` for uploading files to ESP32
 *  `minicom` for connecting to ESP32 for debugging purposes
-*  `openssl` and `rsa` package for reading cryptographic keys.
+*  `openssl` and `rsa` package for reading cryptographic keys
 
 ### Preparing a service account in Google IAM
 
 To access a Google sheet, the project needs a service account:
 
-*  [Follow the instructions](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and create a service account.
-*  Create a key.
-*  Download a JSON file with the key.
+*  [Follow the instructions](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and create a service account
+*  Create a key
+*  Download a JSON file with the key
 
 The key is encoded in PKCS1 format. Unfortunately the project doesn't support PKCS1 yet. You need to convert the key to the format which the project undrstand:
 
@@ -53,10 +53,10 @@ Share the sheet with your service account. The sheet doesn't need to be publicly
 
 `main.conf` contains a configuration for the device. Provide the following parameters:
 
-*  `ssid` and `password` are credentials for your Wi-Fi.
-*  `google_service_account_email` is an email for the Google's service account.
-*  `google_sheet_id` is the Google's sheet ID.
-*  `measurement_interval` is a mesurement interval in `Xh Ym Zs` format, for example, `1h 2m 3s`.
+*  `ssid` and `password` are credentials for your Wi-Fi
+*  `google_service_account_email` is an email for the Google's service account
+*  `google_sheet_id` is the Google's sheet ID
+*  `measurement_interval` is a mesurement interval in `Xh Ym Zs` format, for example, `1h 2m 3s`
 
 ### Uploading MicroPython
 
@@ -80,14 +80,14 @@ The switch turns on the configuration mode. In this mode the device sets up a Wi
 
 ## Acknowledgement
 
-*  [The implementation of RSA signing](src/rsa) is based on [rsa](https://github.com/sybrenstuvel/python-rsa/) package.
+*  [The implementation of RSA signing](src/rsa) is based on [rsa](https://github.com/sybrenstuvel/python-rsa/) package
 *  [The implementation of NTP client](src/ntp.py) is based on [ntptime.py](https://github.com/micropython/micropython/blob/master/ports/esp8266/modules/ntptime.py)
 
 ## Further enhancements
 
 Here is a list of possbile enhancements:
 
-1.  Support [BMP280](https://www.bosch-sensortec.com/bst/products/all_products/bmp280) barometric pressure sensor.
-1.  Support [DS18B20](https://datasheets.maximintegrated.com/en/ds/DS18B20.pdf) temperature sensor.
-1.  Support [MH-Z19](https://www.winsen-sensor.com/d/files/PDF/Infrared%20Gas%20Sensor/NDIR%20CO2%20SENSOR/MH-Z19%20CO2%20Ver1.0.pdf) CO2 sensor.
-1.  Support PKCS1.
+1.  Support [BMP280](https://www.bosch-sensortec.com/bst/products/all_products/bmp280) barometric pressure sensor
+1.  Support [DS18B20](https://datasheets.maximintegrated.com/en/ds/DS18B20.pdf) temperature sensor
+1.  Support [MH-Z19](https://www.winsen-sensor.com/d/files/PDF/Infrared%20Gas%20Sensor/NDIR%20CO2%20SENSOR/MH-Z19%20CO2%20Ver1.0.pdf) CO2 sensor
+1.  Support PKCS1
