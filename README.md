@@ -80,7 +80,7 @@ The switch turns on the configuration mode. In this mode the device sets up a Wi
 
 ## Acknowledgement
 
-*  [The implementation of RSA signing](src/rsa) is based on [rsa](https://github.com/sybrenstuvel/python-rsa/) package
+*  [The implementation of RSA signing](src/rsa) is based on [python-rsa](https://github.com/sybrenstuvel/python-rsa/) package
 *  [The implementation of NTP client](src/ntp.py) is based on [ntptime.py](https://github.com/micropython/micropython/blob/master/ports/esp8266/modules/ntptime.py)
 
 ## Further enhancements
