@@ -13,6 +13,8 @@ The sheet doesn't need to be publicly available on the Internet. The device does
 
 ## How to make a weather station
 
+Here is a [circuit](circuit/ESP32_weather_station_schem.png) and a [breadboard view](circuit/ESP32_weather_station_bb.png).
+
 The project uses MicroPython 1.11. Older or newer versions may also work. The project uses the following tools:
 
 *  `esptool` for flashing ESP32
