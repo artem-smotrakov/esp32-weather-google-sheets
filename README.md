@@ -15,7 +15,7 @@ The sheet doesn't need to be publicly available on the Internet. The device does
 
 Here is a [circuit](circuit/ESP32_weather_station_schem.png) and a [breadboard view](circuit/ESP32_weather_station_bb.png).
 
-The project uses MicroPython 1.11. Older or newer versions may also work. The project uses the following tools:
+The project uses [MicroPython 1.11](https://github.com/micropython/micropython/tree/v1.11). Older or newer versions may also work. The project uses the following tools:
 
 *  `esptool` for flashing ESP32
 *  `mpfshell` for uploading files to ESP32
@@ -77,6 +77,11 @@ Then, you can connect to the board with `sh scripts/minicon.sh` command to check
 ### Configuration mode
 
 The switch turns on the configuration mode. In this mode the device sets up a Wi-Fi access point, and start an HTTP server on http://192.168.4.1. The server provides a web page for updating the configuration of the device.
+
+## Acknowledgement
+
+*  [The implementation of RSA signing](src/rsa) is based on [rsa](https://github.com/sybrenstuvel/python-rsa/) package.
+*  [The implementation of NTP client](src/ntp.py) is based on [ntptime.py](https://github.com/micropython/micropython/blob/master/ports/esp8266/modules/ntptime.py)
 
 ## Further enhancements
 
