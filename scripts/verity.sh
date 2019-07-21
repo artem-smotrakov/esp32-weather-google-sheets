@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# verify flashed firmware on esp8266
+# verify firmware on esp32
 esptool.py \
     --chip esp32 \
     --port /dev/ttyUSB0 \
