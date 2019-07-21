@@ -81,8 +81,11 @@ while True:
         weather.check()
     except:
         if config.get('error_handling') == 'reboot':
+            print('achtung! something wrong happened! rebooting ...')
             util.reboot()
-        else:
+        elif config.get('error_handling') == 'stop':
             raise
+        else:
+            print('achtung! something wrong happened! but ignoring ...')
 
     time.sleep(1) # in seconds
