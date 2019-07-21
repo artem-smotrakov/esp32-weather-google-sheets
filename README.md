@@ -11,6 +11,11 @@ Here is a list of main features:
 
 The sheet doesn't need to be publicly available on the Internet. The device doesn't require any middleman such as PushingBox or IFTTT.
 
+Below is a brief description how the project can be built. More details can be found in the following articles:
+
+*  [MicroPython on ESP32: sending data to Google Sheets](https://blog.gypsyengineer.com/en/diy-electronics/micropython-on-esp32-sending-data-to-google-sheets.html)
+*  [Weather station based on ESP32 and MicroPython](https://blog.gypsyengineer.com/en/diy-electronics/weather-station-based-on-esp32-and-micropython.html)
+
 ## How to make a weather station
 
 Here is a [circuit](circuit/ESP32_weather_station_schem.png) and a [breadboard view](circuit/ESP32_weather_station_bb.png).

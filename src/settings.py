@@ -58,6 +58,7 @@ FORM_TEMPLATE = """\
                     <select name="error_handling" id="error_handling_options">
                         <option value="stop">Stop</option>
                         <option value="reboot">Reboot</option>
+                        <option value="ignore">Ignore</option>
                     </select>
                 </p>
             </div>

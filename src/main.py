@@ -1,9 +1,11 @@
-# ssid and password for the access point
+# ssid and password for the access point which is started in the configuration mode
 # make sure that the password is not too short
 # otherwise, an OSError occurs while setting up a wi-fi access point
 ACCESS_POINT_SSID = 'esp32-weather-google-sheets'
 ACCESS_POINT_PASSWORD = 'helloesp32'
 
+# the handle() method below takes temperature and humidity
+# and writes them to a spreadsheet
 class WeatherHandler:
 
     def __init__(self, spreadsheet):
@@ -14,8 +16,7 @@ class WeatherHandler:
         print('humidity    = %.2f' % h)
         spreadsheet.append_values([t, h])
 
-# entry point
-
+# required imports
 from weather import Weather
 from config import Config
 from machine import Pin
@@ -29,19 +30,24 @@ import util
 gc.enable()
 print('garbage collection threshold: ' + str(gc.threshold()))
 
-# load a config from a file
+# load configuration for a file
 config = Config('main.conf', 'key.json')
 
+# create an instance of ServiceAccount class
+# which then is going to be used to obrain an OAuth2 token
+# for writing data to a sheet
 sa = ServiceAccount()
 sa.email(config.get('google_service_account_email'))
 sa.scope('https://www.googleapis.com/auth/spreadsheets')
 sa.private_rsa_key(config.private_rsa_key())
 
+# create an instance of Spreadsheet which is used to write data to a sheet
 spreadsheet = Spreadsheet()
 spreadsheet.set_service_account(sa)
 spreadsheet.set_id(config.get('google_sheet_id'))
 spreadsheet.set_range('A:A')
 
+# create a handler which takes temperature and humidity and write them to a sheet
 weather_handler = WeatherHandler(spreadsheet)
 
 # initialize the DHT22 sensor which measures temperature and humidity
@@ -49,9 +55,8 @@ weather = Weather(config.get('dht22_pin'),
                   config.get('measurement_interval'),
                   weather_handler)
 
-# initilize the switch which enables the configuration mode
+# initilize a switch which turns on the configuration mode
 # if the switch changes its state, then the board is going to reboot immediately
-# in order to turn on/off the configuration mode
 config_mode_switch = Pin(config.get('config_mode_switch_pin'), Pin.IN)
 config_mode_switch.irq(lambda pin: util.reboot())
 
@@ -72,17 +77,18 @@ if config_mode_switch.value() == 1:
 # try to connect to wi-fi if the configuraion mode is disabled
 util.connect_to_wifi(config.get('ssid'), config.get('password'))
 
-weather_handler.handle(1, 2)
-
-# then, start the main loop
+# finally, start the main loop
 # in the loop, the board is going to check temperature and humidity
 while True:
     try:
         weather.check()
     except:
         if config.get('error_handling') == 'reboot':
+            print('achtung! something wrong happened! rebooting ...')
             util.reboot()
-        else:
+        elif config.get('error_handling') == 'stop':
             raise
+        else:
+            print('achtung! something wrong happened! ignoring ...')
 
     time.sleep(1) # in seconds
