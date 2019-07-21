@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# upload code to esp8266
+# upload code, config and RSA key to esp32
 mpfshell \
     -n -c \
     "open ttyUSB0; put main.conf; put key.json; \

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# flash esp8266 with specified firmware
+# deploy MicroPython to esp32
 esptool.py \
     --chip esp32 \
     --port /dev/ttyUSB0 \
