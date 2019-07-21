@@ -89,6 +89,6 @@ while True:
         elif config.get('error_handling') == 'stop':
             raise
         else:
-            print('achtung! something wrong happened! but ignoring ...')
+            print('achtung! something wrong happened! ignoring ...')
 
     time.sleep(1) # in seconds
