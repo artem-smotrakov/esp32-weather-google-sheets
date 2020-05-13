@@ -11,10 +11,13 @@ class WeatherHandler:
     def __init__(self, spreadsheet):
         self.spreadsheet = spreadsheet
 
-    def handle(self, t, h):
-        print('temperature = %.2f' % t)
+    def handle(self, c, f, h, now):
+        f = int(f)
+        print('centigrade  = %.2f' % c)
+        print('farenheit   = %.2f' % f)
         print('humidity    = %.2f' % h)
-        spreadsheet.append_values([t, h])
+        print('now         = %s' % now)
+        spreadsheet.append_values([c, f, h, now])
 
 # required imports
 from weather import Weather
@@ -92,3 +95,4 @@ while True:
             print('achtung! something wrong happened! ignoring ...')
 
     time.sleep(1) # in seconds
+
