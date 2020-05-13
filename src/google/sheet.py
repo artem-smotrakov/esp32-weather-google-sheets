@@ -15,7 +15,7 @@ class Spreadsheet:
     def __init__(self):
         self._id = ''
         self._range = ''
-        self._url_params = 'insertDataOption=INSERT_ROWS&valueInputOption=RAW'
+        self._url_params = 'insertDataOption=INSERT_ROWS&valueInputOption=USER_ENTERED'
         self._url_template = 'https://sheets.googleapis.com/v4/spreadsheets/%s/values/%s:append?%s'
         self._sa = None
 
@@ -46,3 +46,4 @@ class Spreadsheet:
 
         print('spreadsheet: response:')
         print(response.text)
+
