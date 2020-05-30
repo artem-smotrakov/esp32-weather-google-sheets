@@ -51,12 +51,13 @@ Create a Google sheet and extract its ID from the URL
 
 ```
 https://docs.google.com/spreadsheets/d/<ID_is_here>/edit#gid=0
+```
 
+The following function, when added to the google sheet (Tools > Script editor) allows the
+formula uploaded in the `dt` variable (see `measure(self)`) to calculate a local timestamp
+from the epoch value loaded in column A of the inserted row
 
-# the following function, when added to the google sheet (Tools > Script editor) allows the
-# formula uploaded in the "dt" variable (see "measure(self)") to calculate a local timestamp
-# from the epoch value loaded in column A of the inserted row
-#
+```
 function TIMESTAMP_TO_DATE(value) {
   return new Date(value * 1000);
 }
@@ -97,7 +98,7 @@ The switch turns on the configuration mode. In this mode the device sets up a Wi
 
 *  [The implementation of RSA signing](src/rsa) is based on [python-rsa](https://github.com/sybrenstuvel/python-rsa/) package
 *  [The implementation of NTP client](src/ntp.py) is based on [ntptime.py](https://github.com/micropython/micropython/blob/master/ports/esp8266/modules/ntptime.py)
-*  [The implementation of BME280 micropython driver](src/bme280_int.py)(https://github.com/robert-hh/BME280.git)
+*  [The implementation of BME280 micropython driver](src/bme280_int.py) is based on [this](https://github.com/robert-hh/BME280.git)
 
 ## Further enhancements
 
