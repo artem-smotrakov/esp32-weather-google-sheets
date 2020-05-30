@@ -22,8 +22,8 @@ class Weather:
         # set up for the DHT22 sensor
         self.dht22 = dht.DHT22(machine.Pin(dht22_pin))
         # set up for the BME280 sensor
-        i2c=I2C(sda=machine.Pin(bme280_sda_pin), scl=machine.Pin(bme280_scl_pin))
-        self.bme280 = BME280(i2c=i2c)
+        i2c = I2C(sda = machine.Pin(bme280_sda_pin), scl = machine.Pin(bme280_scl_pin))
+        self.bme280 = BME280(i2c = i2c)
         # the rest of the init code
         self.interval = util.string_to_millis(interval)
         self.iterations = 0
