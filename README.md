@@ -73,6 +73,8 @@ Share the sheet with your service account. The sheet doesn't need to be publicly
 *  `google_service_account_email` is an email for the Google's service account
 *  `google_sheet_id` is the Google's sheet ID
 *  `measurement_interval` is a mesurement interval in `Xh Ym Zs` format, for example, `1h 2m 3s`
+*  Pins that are used by switches, sensors, etc. Actual pin numbers may depend on a particular board.
+   Mare sure that you update the config to contain right pin numbers for your board.
 
 ### Uploading MicroPython
 
