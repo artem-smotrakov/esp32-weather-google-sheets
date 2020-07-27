@@ -5,6 +5,7 @@ This is a weather station based on ESP32 and MicroPython.
 Here is a list of main features:
 
 *  Measuring temperature and humidity with DHT22 sensor
+*  Measuring temperature, humidity and barometric pressure with BME280 sensor
 *  Sending data to a Google sheet
 *  Supporting Google OAuth 2.0 service to get access to the sheet
 *  Configuring the device via web browser
@@ -52,6 +53,16 @@ Create a Google sheet and extract its ID from the URL
 https://docs.google.com/spreadsheets/d/<ID_is_here>/edit#gid=0
 ```
 
+The following function, when added to the google sheet (Tools > Script editor) allows the
+formula uploaded in the `dt` variable (see `measure(self)`) to calculate a local timestamp
+from the epoch value loaded in column A of the inserted row
+
+```
+function TIMESTAMP_TO_DATE(value) {
+  return new Date(value * 1000);
+}
+```
+
 Share the sheet with your service account. The sheet doesn't need to be publicly accessible from the Internet.
 
 ### Preparing a configuration file
@@ -62,6 +73,8 @@ Share the sheet with your service account. The sheet doesn't need to be publicly
 *  `google_service_account_email` is an email for the Google's service account
 *  `google_sheet_id` is the Google's sheet ID
 *  `measurement_interval` is a mesurement interval in `Xh Ym Zs` format, for example, `1h 2m 3s`
+*  Pins that are used by switches, sensors, etc. Actual pin numbers may depend on a particular board.
+   Mare sure that you update the config to contain right pin numbers for your board.
 
 ### Uploading MicroPython
 
@@ -87,6 +100,7 @@ The switch turns on the configuration mode. In this mode the device sets up a Wi
 
 *  [The implementation of RSA signing](src/rsa) is based on [python-rsa](https://github.com/sybrenstuvel/python-rsa/) package
 *  [The implementation of NTP client](src/ntp.py) is based on [ntptime.py](https://github.com/micropython/micropython/blob/master/ports/esp8266/modules/ntptime.py)
+*  [The implementation of BME280 micropython driver](src/bme280_int.py) is based on [this](https://github.com/robert-hh/BME280.git)
 
 ## Further enhancements
 

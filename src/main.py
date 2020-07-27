@@ -11,13 +11,14 @@ class WeatherHandler:
     def __init__(self, spreadsheet):
         self.spreadsheet = spreadsheet
 
-    def handle(self, c, f, h, now):
-        f = int(f)
-        print('centigrade  = %.2f' % c)
-        print('farenheit   = %.2f' % f)
-        print('humidity    = %.2f' % h)
-        print('now         = %s' % now)
-        spreadsheet.append_values([c, f, h, now])
+    def handle(self, dt, dht_c, dht_f, dht_h, bme_c, bme_f, bme_p, bme_h):
+        dht_f = int(dht_f)
+        print('dt          = %s' % dt)
+        print('centigrade  = %.2f' % dht_c)
+        print('farenheit   = %.2f' % dht_f)
+        print('humidity    = %.2f' % dht_h)
+        print('bme_c       = %.2f' % bme_c)
+        spreadsheet.append_values([dt, dht_c, dht_f, dht_h, bme_c, bme_f, bme_p, bme_h])
 
 # required imports
 from weather import Weather
@@ -53,10 +54,8 @@ spreadsheet.set_range('A:A')
 # create a handler which takes temperature and humidity and write them to a sheet
 weather_handler = WeatherHandler(spreadsheet)
 
-# initialize the DHT22 sensor which measures temperature and humidity
-weather = Weather(config.get('dht22_pin'),
-                  config.get('measurement_interval'),
-                  weather_handler)
+# initialize the DHT22 and BME280 sensors which measure temperature, humidity and barometric pressure
+weather = Weather(config.get('dht22_pin'), config.get('bme280_sda_pin'), config.get('bme280_scl_pin'), config.get('measurement_interval'), weather_handler)
 
 # initilize a switch which turns on the configuration mode
 # if the switch changes its state, then the board is going to reboot immediately
@@ -95,4 +94,3 @@ while True:
             print('achtung! something wrong happened! ignoring ...')
 
     time.sleep(1) # in seconds
-
