@@ -1,25 +1,3 @@
-# ssid and password for the access point which is started in the configuration mode
-# make sure that the password is not too short
-# otherwise, an OSError occurs while setting up a wi-fi access point
-ACCESS_POINT_SSID = 'esp32-weather-google-sheets'
-ACCESS_POINT_PASSWORD = 'helloesp32'
-
-# the handle() method below takes temperature and humidity
-# and writes them to a spreadsheet
-class WeatherHandler:
-
-    def __init__(self, spreadsheet):
-        self.spreadsheet = spreadsheet
-
-    def handle(self, c, f, h, now):
-        f = int(f)
-        print('centigrade  = %.2f' % c)
-        print('farenheit   = %.2f' % f)
-        print('humidity    = %.2f' % h)
-        print('now         = %s' % now)
-        spreadsheet.append_values([c, f, h, now])
-
-# required imports
 from weather import Weather
 from config import Config
 from machine import Pin
@@ -29,6 +7,29 @@ import gc
 import time
 import util
 
+# ssid and password for the access point which is started in the configuration mode
+# make sure that the password is not too short
+# otherwise, an OSError occurs while setting up a wi-fi access point
+ACCESS_POINT_SSID = 'esp32-weather-google-sheets'
+ACCESS_POINT_PASSWORD = 'helloesp32'
+
+
+# the handle() method below takes temperature and humidity
+# and writes them to a spreadsheet
+class WeatherHandler:
+
+    def __init__(self, sheet):
+        self.sheet = sheet
+
+    def handle(self, c, f, h, now):
+        f = int(f)
+        print('centigrade  = %.2f' % c)
+        print('farenheit   = %.2f' % f)
+        print('humidity    = %.2f' % h)
+        print('now         = %s' % now)
+        self.sheet.append_values([c, f, h, now])
+
+
 # enable garbage collection
 gc.enable()
 print('garbage collection threshold: ' + str(gc.threshold()))
@@ -37,7 +38,7 @@ print('garbage collection threshold: ' + str(gc.threshold()))
 config = Config('main.conf', 'key.json')
 
 # create an instance of ServiceAccount class
-# which then is going to be used to obrain an OAuth2 token
+# which then is going to be used to obtain an OAuth2 token
 # for writing data to a sheet
 sa = ServiceAccount()
 sa.email(config.get('google_service_account_email'))
@@ -58,14 +59,14 @@ weather = Weather(config.get('dht22_pin'),
                   config.get('measurement_interval'),
                   weather_handler)
 
-# initilize a switch which turns on the configuration mode
+# initialize a switch which turns on the configuration mode
 # if the switch changes its state, then the board is going to reboot immediately
 config_mode_switch = Pin(config.get('config_mode_switch_pin'), Pin.IN)
 config_mode_switch.irq(lambda pin: util.reboot())
 
 # first, check if the configuration mode is enabled
 # if so, set up an access point, and then start an HTTP server
-# the server provides a web form which updates the configuraion of the device
+# the server provides a web form which updates the configuration of the device
 # the server runs on http://192.168.4.1:80
 if config_mode_switch.value() == 1:
     from http.server import HttpServer
@@ -77,7 +78,7 @@ if config_mode_switch.value() == 1:
     HttpServer(ip, 80, handler).start()
     util.reboot()
 
-# try to connect to wi-fi if the configuraion mode is disabled
+# try to connect to wi-fi if the configuration mode is disabled
 util.connect_to_wifi(config.get('ssid'), config.get('password'))
 
 # finally, start the main loop
@@ -94,5 +95,5 @@ while True:
         else:
             print('achtung! something wrong happened! ignoring ...')
 
-    time.sleep(1) # in seconds
+    time.sleep(1)  # in seconds
 
