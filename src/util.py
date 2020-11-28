@@ -1,4 +1,3 @@
-from machine import Pin
 import time
 import machine
 import network
@@ -9,14 +8,6 @@ def reboot(delay=5):
     print('rebooting ...')
     time.sleep(delay)
     machine.reset()
-
-
-# start a wi-fi access point
-def start_access_point(ssid, password):
-    access_point = network.WLAN(network.AP_IF)
-    access_point.active(True)
-    access_point.config(essid=ssid, password=password, authmode=network.AUTH_WPA_WPA2_PSK)
-    return access_point
 
 
 # tries to connect to a wi-fi network

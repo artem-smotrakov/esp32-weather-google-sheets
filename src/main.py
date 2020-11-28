@@ -4,6 +4,7 @@ from lights import Lights
 from machine import Pin
 from google.auth import ServiceAccount
 from google.sheet import Spreadsheet
+from wifi import AccessPoint
 import gc
 import time
 import util
@@ -73,15 +74,12 @@ if config_mode_switch.value() == 1:
     from settings import ConnectionHandler
     print('enabled configuration mode')
 
-    # setting ssid and password for the access point which is started in the configuration mode
-    # make sure that the password is not too short
-    # otherwise, an OSError occurs while setting up a wi-fi access point
-    access_point = util.start_access_point(config.get('access_point_ssid'),
-                                           config.get('access_point_password'))
-    handler = ConnectionHandler(config, lights)
-    ip = access_point.ifconfig()[0]
+    access_point = AccessPoint(config.get('access_point_ssid'),
+                               config.get('access_point_password'))
+    access_point.start()
     lights.wifi_on()
-    HttpServer(ip, 80, handler).start()
+    handler = ConnectionHandler(config, lights)
+    HttpServer(access_point.ip(), 80, handler).start()
     lights.wifi_off()
     util.reboot()
 
