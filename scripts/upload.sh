@@ -10,6 +10,7 @@ else
   echo "SSID env variable is empty which means that no WiFi network identifier is written in the config."
   echo "Your device will not be able to connect to WiFi."
   echo "Please set SSID env variable."
+  exit 1
 fi
 
 if [ "$WIFI_PASSWORD" != "" ]; then
@@ -19,6 +20,27 @@ else
   echo "WIFI_PASSWORD env variable is empty which means that no WiFi password is written in the config."
   echo "Your device will not be able to connect to WiFi."
   echo "Please set WIFI_PASSWORD env variable."
+  exit 1
+fi
+
+if [ "$ACCESS_POINT_SSID" != "" ]; then
+  jq ".access_point_ssid = \"${ACCESS_POINT_SSID}\"" main.conf > tmp
+  mv tmp main.conf
+else
+  echo "ACCESS_POINT_SSID env variable is empty."
+  echo "It means that a WiFi access point can't be started for configuring the device."
+  echo "Please set ACCESS_POINT_SSID env variable."
+  exit 1
+fi
+
+if [ "$ACCESS_POINT_PASSWORD" != "" ]; then
+  jq ".access_point_password = \"$ACCESS_POINT_PASSWORD\"" main.conf > tmp
+  mv tmp main.conf
+else
+  echo "ACCESS_POINT_PASSWORD env variable is empty."
+  echo "It means that a WiFi access point can't be started for configuring the device."
+  echo "Please set ACCESS_POINT_PASSWORD env variable."
+  exit 1
 fi
 
 # send Ctrl-C
