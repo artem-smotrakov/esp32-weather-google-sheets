@@ -22,7 +22,7 @@ else
 fi
 
 # send Ctrl-C
-#echo -e '\003' > /dev/ttyUSB0
+echo -e '\003' > /dev/ttyUSB0
 
 # upload code, config and RSA key to esp32
 mpfshell \
