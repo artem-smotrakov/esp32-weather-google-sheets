@@ -5,6 +5,7 @@ from machine import Pin
 from google.auth import ServiceAccount
 from google.sheet import Spreadsheet
 from wifi import AccessPoint
+from wifi import Connection
 import gc
 import time
 import util
@@ -83,18 +84,17 @@ if config_mode_switch.value() == 1:
     lights.wifi_off()
     util.reboot()
 
-# try to connect to wi-fi if the configuration mode is disabled
-if util.connect_to_wifi(config.get('ssid'), config.get('password'), lights):
-    lights.wifi_on()
-else:
-    lights.error_off()
-    # TODO: should we really proceed if we could not connect to WiFi?
+
+# try to connect to WiFi if the configuration mode is disabled
+wifi = Connection(config.get('ssid'), config.get('password'), lights)
+wifi.connect()
 
 # finally, start the main loop
 # in the loop, the board is going to check temperature and humidity
 while True:
     try:
         lights.error_off()
+        wifi.reconnect_if_necessary()
         weather.check()
     except Exception as e:
         lights.error_on()
