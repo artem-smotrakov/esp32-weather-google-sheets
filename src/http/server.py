@@ -3,17 +3,18 @@ try:
 except:
     import socket
 
+
 # this is a simple HTTP server
 class HttpServer:
 
-    # initilizes an HTTP server with IP address, port, and a handler
+    # initializes an HTTP server with IP address, port, and a handler
     # which handles incoming HTTP requests
     def __init__(self, ip, port, handler):
         self.ip = ip
         self.port = port
         self.handler = handler
 
-    # starts the server on the specified IP adress and port
+    # starts the server on the specified IP address and port
     def start(self):
         s = socket.socket()
 
@@ -61,5 +62,7 @@ class HttpServer:
 
                 client_s.close()
             except Exception as e:
-                print(e)
-                raise e
+                import sys
+                sys.print_exception(e)
+                print('continue ...')
+

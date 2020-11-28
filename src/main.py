@@ -7,6 +7,7 @@ from google.sheet import Spreadsheet
 import gc
 import time
 import util
+import sys
 
 # ssid and password for the access point which is started in the configuration mode
 # make sure that the password is not too short
@@ -98,14 +99,17 @@ while True:
     try:
         lights.error_off()
         weather.check()
-    except:
+    except Exception as e:
         lights.error_on()
+        print('achtung! something wrong happened! ...')
+        sys.print_exception(e)
         if config.get('error_handling') == 'reboot':
-            print('achtung! something wrong happened! rebooting ...')
+            print('rebooting ...')
             util.reboot()
         elif config.get('error_handling') == 'stop':
+            print('stop ...')
             raise
         else:
-            print('achtung! something wrong happened! ignoring ...')
+            print('ignore ...')
 
     time.sleep(3)  # in seconds

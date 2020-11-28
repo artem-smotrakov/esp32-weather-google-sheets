@@ -126,6 +126,8 @@ class ConnectionHandler:
                 client_s.write(HTTP_REDIRECT)
             else:
                 client_s.write(get_form(self._config))
-        except:
+        except Exception as e:
             self._lights.error_on()
             print('achtung! something wrong happened!')
+            import sys
+            sys.print_exception(e)
