@@ -70,6 +70,7 @@ FORM_TEMPLATE = """\
 </html>
 """
 
+
 # returns an HTTP response with the form above
 # the fields in the form contain the current configuration
 # (except the password for wi-fi network)
@@ -87,38 +88,44 @@ def get_form(config):
                         str(config.get('google_sheet_id')))
     return HTTP_RESPONSE % (len(form), form)
 
+
 # a handler for incoming HTTP connections
 # it prints out the HTML form above,
 # and processes the values from the form submitted by a user
 # the values are then stored to the configuration
 class ConnectionHandler:
 
-    def __init__(self, config):
+    def __init__(self, config, lights):
         self._config = config
+        self._lights = lights
 
     def handle(self, client_s, status_line, headers, data):
+        self._lights.error_off()
+        try:
+            # process data from the web form if a POST request received
+            # otherwise, print out the form
+            if status_line.startswith('POST') and data:
 
-        # process data from the web form if a POST request received
-        # otherwise, print out the form
-        if status_line.startswith('POST') and data:
+                # update the config with the data from the form
+                params = data.split('&')
+                for param in params:
+                    parts = param.split('=')
+                    name = parts[0].strip()
+                    value = parts[1].strip()
 
-            # update the config with the data from the form
-            params = data.split('&')
-            for param in params:
-                parts = param.split('=')
-                name = parts[0].strip()
-                value = parts[1].strip()
+                    # don't update the password if the password field is empty
+                    if name == 'password' and not value:
+                        continue
 
-                # don't update the password if the password field is empty
-                if name == 'password' and not value:
-                    continue
+                    self._config.set(name, value)
 
-                self._config.set(name, value)
+                # store the config
+                self._config.store()
 
-            # store the config
-            self._config.store()
-
-            # redirect the client to avoid resubmitting the form
-            client_s.write(HTTP_REDIRECT)
-        else:
-            client_s.write(get_form(self._config))
+                # redirect the client to avoid resubmitting the form
+                client_s.write(HTTP_REDIRECT)
+            else:
+                client_s.write(get_form(self._config))
+        except:
+            self._lights.error_on()
+            print('achtung! something wrong happened!')

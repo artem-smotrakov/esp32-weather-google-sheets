@@ -39,7 +39,7 @@ print('garbage collection threshold: ' + str(gc.threshold()))
 config = Config('main.conf', 'key.json')
 
 # initialize an interface to LEDs
-lights = Lights(config.get('wifi_led_pid'))
+lights = Lights(config.get('wifi_led_pid'), config.get('error_led_pid'))
 lights.off()
 
 # create an instance of ServiceAccount class
@@ -78,7 +78,7 @@ if config_mode_switch.value() == 1:
     from settings import ConnectionHandler
     print('enabled configuration mode')
     access_point = util.start_access_point(ACCESS_POINT_SSID, ACCESS_POINT_PASSWORD)
-    handler = ConnectionHandler(config)
+    handler = ConnectionHandler(config, lights)
     ip = access_point.ifconfig()[0]
     lights.wifi_on()
     HttpServer(ip, 80, handler).start()
@@ -86,15 +86,20 @@ if config_mode_switch.value() == 1:
     util.reboot()
 
 # try to connect to wi-fi if the configuration mode is disabled
-if util.connect_to_wifi(config.get('ssid'), config.get('password')):
+if util.connect_to_wifi(config.get('ssid'), config.get('password'), lights):
     lights.wifi_on()
+else:
+    lights.error_off()
+    # TODO: should we really proceed if we could not connect to WiFi?
 
 # finally, start the main loop
 # in the loop, the board is going to check temperature and humidity
 while True:
     try:
+        lights.error_off()
         weather.check()
     except:
+        lights.error_on()
         if config.get('error_handling') == 'reboot':
             print('achtung! something wrong happened! rebooting ...')
             util.reboot()
@@ -103,5 +108,4 @@ while True:
         else:
             print('achtung! something wrong happened! ignoring ...')
 
-    time.sleep(1)  # in seconds
-
+    time.sleep(3)  # in seconds
