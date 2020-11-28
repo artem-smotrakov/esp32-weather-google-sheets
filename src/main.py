@@ -1,5 +1,6 @@
 from weather import Weather
 from config import Config
+from lights import Lights
 from machine import Pin
 from google.auth import ServiceAccount
 from google.sheet import Spreadsheet
@@ -36,6 +37,10 @@ print('garbage collection threshold: ' + str(gc.threshold()))
 
 # load configuration for a file
 config = Config('main.conf', 'key.json')
+
+# initialize an interface to LEDs
+lights = Lights(config.get('wifi_led_pid'))
+lights.off()
 
 # create an instance of ServiceAccount class
 # which then is going to be used to obtain an OAuth2 token
@@ -75,11 +80,14 @@ if config_mode_switch.value() == 1:
     access_point = util.start_access_point(ACCESS_POINT_SSID, ACCESS_POINT_PASSWORD)
     handler = ConnectionHandler(config)
     ip = access_point.ifconfig()[0]
+    lights.wifi_on()
     HttpServer(ip, 80, handler).start()
+    lights.wifi_off()
     util.reboot()
 
 # try to connect to wi-fi if the configuration mode is disabled
-util.connect_to_wifi(config.get('ssid'), config.get('password'))
+if util.connect_to_wifi(config.get('ssid'), config.get('password')):
+    lights.wifi_on()
 
 # finally, start the main loop
 # in the loop, the board is going to check temperature and humidity
