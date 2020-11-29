@@ -1,4 +1,4 @@
-from weather import DHT22Sensor
+from weather import DHT22Sensor, MHZ19BSensor
 from weather import Weather
 from config import Config
 from lights import Lights
@@ -72,6 +72,9 @@ weather = Weather(config.get('measurement_interval'),
 if config.get('dht22_pin'):
     weather.add(DHT22Sensor(config.get('dht22_pin')))
     print('registered a DHT22 sensor')
+if config.get('mhz19b_tx_pin') and config.get('mhz19b_rx_pin'):
+    weather.add(MHZ19BSensor(config.get('mhz19b_tx_pin'), config.get('mhz19b_rx_pin'), lights))
+    print('registered a MH-Z19B sensor')
 
 # initialize a switch which turns on the configuration mode
 # if the switch changes its state, then the board is going to reboot immediately
