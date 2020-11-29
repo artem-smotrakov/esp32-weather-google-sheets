@@ -66,10 +66,12 @@ spreadsheet.set_range('A:A')
 # create a handler which takes temperature and humidity and write them to a sheet
 weather_handler = WeatherHandler(spreadsheet)
 
-# initialize sensors and add them to a controller
+# initialize available sensors and add them to a controller
 weather = Weather(config.get('measurement_interval'),
                   weather_handler)
-weather.add(DHT22Sensor(config.get('dht22_pin')))
+if config.get('dht22_pin'):
+    weather.add(DHT22Sensor(config.get('dht22_pin')))
+    print('registered a DHT22 sensor')
 
 # initialize a switch which turns on the configuration mode
 # if the switch changes its state, then the board is going to reboot immediately
