@@ -3,45 +3,57 @@ import dht
 import machine
 import util
 
-# the class controls a DHT22 sensor which measures temperature and humidity
 
+# this class is a controller that coordinates measurements from multiple sensors
+# in a specified interval, it checks a number of sensors and sends the measurements to a handler
 class Weather:
 
-    # initilizes an instance of Weather with the following parameters
-    # - a pin where DHT22 is connected to
+    # initializes an instance of Weather with the following parameters
     # - an interval which specifies the schedule for measurements
-    # - a handler for handling measured temperature and humidity
-    def __init__(self, pin, interval, handler = None):
-        self.last_measurement = time.ticks_ms()
-        self.dht22 = dht.DHT22(machine.Pin(pin))
+    # - a handler for handling measurements from sensors
+    def __init__(self, interval, handler):
+        self.last_measurement = None
         self.interval = util.string_to_millis(interval)
-        self.iterations = 0
         self.handler = handler
+        self.sensors = []
 
-    # mesures temperature and humidity
+    # add a sensor
+    def add(self, sensor):
+        self.sensors.append(sensor)
+
+    # checks if it's time to measure
+    def check(self):
+        current_time = time.ticks_ms()
+        deadline = time.ticks_add(self.last_measurement, self.interval)
+        if self.last_measurement is None or time.ticks_diff(deadline, current_time) <= 0:
+            self.measure()
+            self.last_measurement = current_time
+
+    # measure everything and send the measurements to the handler
+    def measure(self):
+        data = []
+        for sensor in self.sensors:
+            measurement = sensor.measure()
+            data = data + measurement
+
+        if self.handler is not None:
+            self.handler.handle(data)
+
+
+# the class measures temperature and humidity with DHT22 sensor
+class DHT22Sensor:
+
+    # initializes a new instance
+    def __init__(self, pin):
+        self.dht22 = dht.DHT22(machine.Pin(pin))
+
+    # measure temperature and humidity
     def measure(self):
         self.dht22.measure()
         c = self.dht22.temperature()
         h = self.dht22.humidity()
-        f = (c * 1.8) + 32
-        now = "=TIMESTAMP_TO_DATE(INDIRECT(\"A\" & ROW()))"
-        if self.handler != None:
-            self.handler.handle(c, f, h, now)
-
-    # checks if it's time to measure temperature and humidity
-    def check(self):
-        current_time = time.ticks_ms()
-        deadline = time.ticks_add(self.last_measurement, self.interval)
-        if ((time.ticks_diff(deadline, current_time) <= 0) or (self.iterations == 0)):
-            self.measure()
-            self.iterations += 1
-            self.last_measurement = current_time
-
-# the following function, when added to the google sheet (Tools > Script editor) allows the
-# formula uploaded in the "now" variable (see "measure(self)") to calculate a local timestamp
-# from the epoch value loaded in column A of the inserted row
-#
-#function TIMESTAMP_TO_DATE(value) {
-#  return new Date(value * 1000);
-#}
-# see the sheets.py file to set the ValueInputOption to USER_INPUT to avoid now string value being prefixed with a ' 
+        f = int((c * 1.8) + 32)
+        print('centigrade  = %.2f' % c)
+        print('farenheit   = %.2f' % f)
+        print('humidity    = %.2f' % h)
+        return [c, h, f]
