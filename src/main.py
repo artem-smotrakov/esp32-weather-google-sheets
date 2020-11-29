@@ -1,3 +1,4 @@
+from weather import DHT22Sensor
 from weather import Weather
 from config import Config
 from lights import Lights
@@ -14,18 +15,27 @@ import sys
 
 # the handle() method below takes temperature and humidity
 # and writes them to a spreadsheet
+#
+# the following function, when added to the google sheet (Tools > Script editor) allows the
+# formula uploaded in the "now" variable (see "measure(self)") to calculate a local timestamp
+# from the epoch value loaded in column A of the inserted row
+#
+# function TIMESTAMP_TO_DATE(value) {
+#   return new Date(value * 1000);
+# }
+# see the sheets.py file to set the ValueInputOption to USER_INPUT to avoid now string value being prefixed with a '
 class WeatherHandler:
 
+    # initializes a new handler
     def __init__(self, sheet):
         self.sheet = sheet
 
-    def handle(self, c, f, h, now):
-        f = int(f)
-        print('centigrade  = %.2f' % c)
-        print('farenheit   = %.2f' % f)
-        print('humidity    = %.2f' % h)
-        print('now         = %s' % now)
-        self.sheet.append_values([c, f, h, now])
+    # send data to the sheet
+    def handle(self, data):
+        now = "=TIMESTAMP_TO_DATE(INDIRECT(\"A\" & ROW()))"
+        data.append(now)
+        print('send the following to the sheet: %s' % data)
+        self.sheet.append_values(data)
 
 
 # enable garbage collection
@@ -56,10 +66,10 @@ spreadsheet.set_range('A:A')
 # create a handler which takes temperature and humidity and write them to a sheet
 weather_handler = WeatherHandler(spreadsheet)
 
-# initialize the DHT22 sensor which measures temperature and humidity
-weather = Weather(config.get('dht22_pin'),
-                  config.get('measurement_interval'),
+# initialize sensors and add them to a controller
+weather = Weather(config.get('measurement_interval'),
                   weather_handler)
+weather.add(DHT22Sensor(config.get('dht22_pin')))
 
 # initialize a switch which turns on the configuration mode
 # if the switch changes its state, then the board is going to reboot immediately
