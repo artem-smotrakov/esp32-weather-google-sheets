@@ -8,16 +8,20 @@ try:
 except:
     import struct
 
+
+# get current time from an NTP server
 # based on https://github.com/micropython/micropython/blob/master/ports/esp8266/modules/ntptime.py
-def time(host = 'pool.ntp.org', port=123):
-    NTP_QUERY = bytearray(48)
-    NTP_QUERY[0] = 0x1b
-    NTP_DELTA = 2208988800 # 1970-01-01 00:00:00
-    addr = socket.getaddrinfo(host, 123)[0][-1]
+def time(host='pool.ntp.org', port=123):
+    ntp_query = bytearray(48)
+    ntp_query[0] = 0x1b
+    ntp_delta = 2208988800  # 1970-01-01 00:00:00
+    recipient = socket.getaddrinfo(host, port)[0][-1]
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(1)
-    res = s.sendto(NTP_QUERY, addr)
-    msg = s.recv(48)
-    s.close()
+    try:
+        s.settimeout(1)
+        s.sendto(ntp_query, recipient)
+        msg = s.recv(48)
+    finally:
+        s.close()
     val = struct.unpack("!I", msg[40:44])[0]
-    return val - NTP_DELTA
+    return val - ntp_delta
