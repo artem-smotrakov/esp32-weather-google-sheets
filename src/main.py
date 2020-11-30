@@ -11,6 +11,7 @@ import gc
 import time
 import util
 import sys
+import uerrno
 
 
 # the handle() method below takes temperature and humidity
@@ -115,6 +116,8 @@ while True:
         lights.error_on()
         print('achtung! something wrong happened! ...')
         sys.print_exception(e)
+        if isinstance(e, OSError) and e.args[0] in uerrno.errorcode:
+            print('error code: %s' % uerrno.errorcode[e.args[0]])
         if config.get('error_handling') == 'reboot':
             print('rebooting ...')
             util.reboot()
@@ -125,3 +128,4 @@ while True:
             print('ignore ...')
 
     time.sleep(3)  # in seconds
+
