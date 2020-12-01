@@ -43,36 +43,21 @@ class Connection:
         self.ssid = ssid
         self.password = password
         self.lights = lights
-        self.nic = None
+        self.nic = network.WLAN(network.STA_IF)
 
     # connect to the specified wi-fi network
     def connect(self):
         self.lights.wifi_off()
         self.lights.error_off()
         print('connecting to network: %s' % self.ssid)
-        self.nic = network.WLAN(network.STA_IF)
         self.nic.active(True)
+        self.nic.connect(self.ssid, self.password)
 
         attempt = 0
         while attempt < 30 and not self.nic.isconnected():
-            print('connecting ...')
-            self.nic.connect(self.ssid, self.password)
-
-            # check if the connection was successfully established
-            if self.nic.isconnected():
-                print('connected')
-                self.lights.wifi_on()
-                self.lights.error_off()
-                return
-
-            print('connection failed')
-            self.lights.error_on()
-
-            # allow some time to establish the connection
-            # since the connect() method may return
-            # even before the connection is established
-            time.sleep(2.0)
+            time.sleep(1)
             attempt = attempt + 1
+            print('still connecting ...')
 
         if self.nic.isconnected():
             print('connected')
@@ -84,9 +69,20 @@ class Connection:
 
     # check if the connection is active
     def is_connected(self):
-        return self.nic is not None and self.nic.isconnected()
+        return self.nic is not None and self.nic.active() and self.nic.isconnected()
 
     # tries reconnecting if the connection is lost
     def reconnect_if_necessary(self):
         while not self.is_connected():
             self.connect()
+
+    # disconnect from the network
+    def disconnect(self):
+        print('disconnecting ...')
+        self.nic.disconnect()
+        self.nic.active(False)
+
+    # disconnect from the network and connect again
+    def reconnect(self):
+        self.disconnect()
+        self.connect()

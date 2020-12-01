@@ -107,12 +107,18 @@ wifi.connect()
 
 # finally, start the main loop
 # in the loop, the board is going to check temperature and humidity
+error = False
 while True:
     try:
+        # reconnect if a error occurred or the connection is lost
+        if error or not wifi.is_connected():
+            wifi.reconnect()
+
+        error = False
         lights.error_off()
-        wifi.reconnect_if_necessary()
         weather.check()
     except Exception as e:
+        error = True
         lights.error_on()
         print('achtung! something wrong happened! ...')
         sys.print_exception(e)
@@ -125,7 +131,7 @@ while True:
             print('stop ...')
             raise
         else:
-            print('ignore ...')
+            print('continue ...')
 
-    time.sleep(3)  # in seconds
-
+        # a little delay
+        time.sleep(3)
