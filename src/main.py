@@ -47,7 +47,9 @@ print('garbage collection threshold: ' + str(gc.threshold()))
 config = Config('main.conf', 'key.json')
 
 # initialize an interface to LEDs
-lights = Lights(config.get('wifi_led_pid'), config.get('error_led_pid'))
+lights = Lights(config.get('wifi_led_pid'),
+                config.get('error_led_pid'),
+                config.get('high_co2_led_pin'))
 lights.off()
 
 # create an instance of ServiceAccount class
@@ -74,7 +76,10 @@ if config.get('dht22_pin'):
     weather.add(DHT22Sensor(config.get('dht22_pin')))
     print('registered a DHT22 sensor')
 if config.get('mhz19b_tx_pin') and config.get('mhz19b_rx_pin'):
-    weather.add(MHZ19BSensor(config.get('mhz19b_tx_pin'), config.get('mhz19b_rx_pin'), lights))
+    weather.add(MHZ19BSensor(config.get('mhz19b_tx_pin'),
+                             config.get('mhz19b_rx_pin'),
+                             lights,
+                             config.get('co2_threshold')))
     print('registered a MH-Z19B sensor')
 
 # initialize a switch which turns on the configuration mode

@@ -64,14 +64,14 @@ class DHT22Sensor:
 class MHZ19BSensor:
 
     # initializes a new instance
-    def __init__(self, tx_pin, rx_pin, lights):
+    def __init__(self, tx_pin, rx_pin, lights, co2_threshold):
         self.uart = UART(1, baudrate=9600, bits=8, parity=None, stop=1, tx=int(tx_pin), rx=int(rx_pin))
         self.lights = lights
+        self.co2_threshold = int(co2_threshold)
 
     # measure CO2
     def measure(self):
         while True:
-
             # send a read command to the sensor
             self.uart.write(b'\xff\x01\x86\x00\x00\x00\x00\x00\x79')
 
@@ -89,8 +89,16 @@ class MHZ19BSensor:
             print('retry ...')
 
         self.lights.error_off()
+
         co2 = buf[2] * 256 + buf[3]
         print('co2         = %.2f' % co2)
+
+        # turn on the LED if the CO2 level is higher than the threshold
+        if co2 > self.co2_threshold:
+            self.lights.high_co2_on()
+        else:
+            self.lights.high_co2_off()
+
         return [co2]
 
     # check data returned by the sensor
