@@ -2,11 +2,12 @@ import os
 import ujson
 from rsa.key import PrivateKey
 
+
 # this class holds a private RSA key and a configuration for the device
-# the configuraion is stored to a file
+# the configuration is stored to a file
 class Config:
 
-    # loads a configuraion from the specified file,
+    # loads a configuration from the specified file,
     # and initializes an instance of Config
     def __init__(self, config_filename, key_filename):
         self.filename = config_filename
@@ -24,7 +25,7 @@ class Config:
     def set(self, name, value):
         self.values[name] = value
 
-    # stores the configuraion to the specified file
+    # stores the configuration to the specified file
     def store(self):
         with open(self.filename, 'w') as f:
             f.write(ujson.dumps(self.values))
@@ -33,17 +34,19 @@ class Config:
     def private_rsa_key(self):
         return self.key
 
-    # loads a configration from the specified file
-    def load_config(self, config_filename):
-        if not config_filename in os.listdir():
+    # loads a configuration from the specified file
+    @staticmethod
+    def load_config(config_filename):
+        if config_filename not in os.listdir():
             print('cannot find ' + config_filename)
             return {}
         with open(config_filename) as f:
             return ujson.load(f)
 
     # loads a private RSA key from a json file
-    def load_key(self, filename):
-        if not filename in os.listdir():
+    @staticmethod
+    def load_key(filename):
+        if filename not in os.listdir():
             print('cannot find ' + filename)
             return
         with open(filename) as f:
