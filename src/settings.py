@@ -43,6 +43,9 @@ FORM_TEMPLATE = """\
             <div style="width: 100%;">
                 <p style="width: 100%;">Interval:&nbsp;<input name="measurement_interval" type="text" value="%measurement_interval%"/></p>
             </div>
+            <div style="width: 100%;">
+                <p style="width: 100%;">CO2 threshold:&nbsp;<input name="co2_threshold" type="text" value="%co2_threshold%"/></p>
+            </div>
             <h3 style="font-size:5vw">Google Sheets settings</h3>
             <div style="width: 100%;">
                 <p style="width: 100%;">Service account email:&nbsp;
@@ -80,6 +83,8 @@ def get_form(config):
                         str(config.get('ssid')))
     form = form.replace('%measurement_interval%',
                         str(config.get('measurement_interval')))
+    form = form.replace('%co2_threshold%',
+                        str(config.get('co2_threshold')))
     form = form.replace('%error_handling%',
                         str(config.get('error_handling')))
     form = form.replace('%google_service_account_email%',
